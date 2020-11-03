@@ -1,0 +1,56 @@
+
+Before running the pipeline for the first time, the script 2_blat_pipeline.pl needs to be initialized using the 
+-b and -g commands. This creates a file called ALIGNMENT to hold the paths to blat program and 
+your reference genome. One or both can be set at the same time. Running -b or -g again changes
+the paths.
+
+2_blat_pipeline.pl -b /path/to/Blat -g /path/to/reference/genome
+
+Analysis steps
+
+1.	Set your working directory to the directory that contains your pair fastq.gz files.
+	Copy a settings file template to the folder containing your fastq.gz files. Edit the
+	settings file to be specific for your data. See the included example settings file and
+	the example below.
+
+2.	Run 1_demultiplex.pl on the command line with your settings file as a 
+	command line argument. The demultiplexed data will be printed in a folder for the 3LTR and/or 
+	5LTR with the barcodes as the name. A file will be made for each barcode combination that
+	has reads that pass the filters.
+	
+		/path/to/1_demultiplex.pl settings_example.txt
+
+3.	Run 2_blat_pipeline.pl with the path to the debarcoded data files as command line
+	arguments. For example, "3LTR/PE1_D505_PE2_D706.txt". Optionally, you can align your
+	sequences to a reference HIV genome using the -v command.
+
+		/path/to/2_blat_pipeline.pl -v path/to/virus_ref.fa 3LTR/PE1_D505_PE2_D706.txt 
+		
+		
+
+Edit the settings file to be specific for your sequencing run.  The example settings file is 
+shown below with descriptions. IUPAC codes can be used for ambiguous bases.
+
+	<PE1barcodes> # Enter the LTR primer barcode(s) in this section. Enter one or more depending
+	D504		  # on if you want to analyze one LTR, both, and/or check for contamination.
+	D505
+	<PE2barcodes> # Enter your Linker primer barcode.  The script doesn't check for this barcode
+	D706		  # sequence because the MiSeq will have separated by this barcode already.
+	<LTR>	# Specify in this section if you want to analyze one LTR or both.
+	3LTR
+	5LTR
+	<3LTR_primer>  # Enter your 3LTR primer sequence.
+	CCCTTTTAGTCAGTGTGGAAAATC
+	<3LTR_junction> # Enter the last several bases of your 3LTR junction sequence. 
+	TCTCTAGCA
+	<5LTR_primer>  # Enter your 5LTR primer sequence.
+	TGGGAGTGAAYTAGCCCTTC
+	<5LTR_junction>  # Enter the last several bases of your 5LTR junction sequence. 
+	CCCTTCCA
+	<file_name_template> # Enter the name of one of your data files.
+	example_MiSeq_data_S1_L001_R1_001.fastq.gz
+	<pairs> # The number of Read 1 & Read 2 pairs for analysis. 1 per Miseq run but more for HiSeq.
+	1
+
+
+		
